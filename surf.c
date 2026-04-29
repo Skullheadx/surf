@@ -151,6 +151,7 @@ static void setup(void);
 static void sigchld(int unused);
 static void sighup(int unused);
 static char *buildfile(const char *path);
+static char *buildfile2(const char *path);
 static char *buildpath(const char *path);
 static char *untildepath(const char *path);
 static const char *getuserhomedir(const char *user);
@@ -353,7 +354,7 @@ setup(void)
 
 	/* dirs and files */
 	cookiefile = buildfile(cookiefile);
-	scriptfile = buildfile(scriptfile);
+	scriptfile = buildfile2(scriptfile);
 	certdir    = buildpath(certdir);
 	if (curconfig[Ephemeral].val.i)
 		cachedir = NULL;
@@ -400,7 +401,7 @@ setup(void)
 		}
 		g_free(styledir);
 	} else {
-		stylefile = buildfile(stylefile);
+		stylefile = buildfile2(stylefile);
 	}
 
 	for (i = 0; i < LENGTH(uriparams); ++i) {
@@ -463,6 +464,31 @@ buildfile(const char *path)
 
 	return fpath;
 }
+
+char *
+buildfile2(const char *path)
+{
+	char *dname, *bname, *bpath, *fpath;
+	FILE *f;
+
+	dname = g_path_get_dirname(path);
+	bname = g_path_get_basename(path);
+
+	bpath = buildpath(dname);
+	g_free(dname);
+
+	fpath = g_build_filename(bpath, bname, NULL);
+	g_free(bpath);
+	g_free(bname);
+
+	if (!(f = fopen(fpath, "r")))
+		die("Could not open file: %s\n", fpath);
+
+	fclose(f);
+
+	return fpath;
+}
+
 
 static const char*
 getuserhomedir(const char *user)
