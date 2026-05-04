@@ -67,7 +67,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 /* SETPROP(readprop, setprop)*/
 #define SETPROP(p, s) { \
     .v = (const char *[]){ "/bin/sh", "-c", \
-        "surf.sh $1 $2 $3", "surf-sh", p, s, winid, NULL \
+        "surf_search $1 $2 $3", "surf_search", p, s, winid, NULL \
     } \
 }
 
